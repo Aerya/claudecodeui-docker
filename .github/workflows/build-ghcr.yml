@@ -121,10 +121,11 @@ jobs:
 
           WORKDIR /opt/claudecodeui
 
-          COPY upstream/package*.json ./
-          RUN npm ci
-
+          # L’upstream lance un script postinstall pendant npm ci.
+          # Il faut donc copier tout le projet AVANT npm ci, sinon scripts/fix-node-pty.js est absent.
           COPY upstream/ ./
+
+          RUN npm ci
 
           RUN npm run build \
             && mkdir -p /tmp/cloudcli-pack \
