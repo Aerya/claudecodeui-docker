@@ -25,6 +25,53 @@ GEMINI_API_KEY=
 ```
 Ca se configure aussi depuis le terminal intégré selon les CLIs.
 
+
+### CLIs agents
+
+- `cloudcli` depuis `siteboon/claudecodeui`
+- `claude` via `@anthropic-ai/claude-code`
+- `codex` via `@openai/codex`
+- `gemini` via `@google/gemini-cli`
+
+### Outils / MCP
+
+- `rtk`
+- `agentmemory`
+- `iii`
+- `ctx7`
+- `@upstash/context7-mcp`
+- `@playwright/mcp`
+- Chromium Playwright
+- `github-mcp-server`, compilé depuis `github/github-mcp-server`
+- `claude-flow@alpha`
+- `ruv-swarm`
+
+### Skills installées au build dans `/opt/agent-defaults/root`
+
+Copiées automatiquement au démarrage vers `/root/.claude` et `/root/.codex` :
+- `frontend-design`
+- `develop-userscripts`
+- `github-actions-docs`
+- `cloudflare`
+- `docker-expert`
+- `deployment-automation`
+- `find-skills`
+- `simple`
+- `ui-component-patterns`
+- `ui-ux-pro-max`
+- `security-review`
+- `coding-standards-best-practices`
+- `performance-benchmark`
+
+## Claude plugins
+
+- `safety-hooks`
+- `autonomous-skill`
+- `claude-flow`
+- `everything-claude-code` / `ecc`
+- `claude-hud`
+- `ui-ux-pro-max`
+
 ## Notes licence
 
 L'upstream CloudCLI / Claude Code UI est sous licence AGPL-3.0-or-later.

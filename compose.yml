@@ -5,6 +5,8 @@ services:
     restart: always
     ports:
       - "3002:3001"
+      # Optionnel, exposer derrière reverse proxy/auth pour le viewer agentmemory
+      # - "3003:3113"
     environment:
       TZ: Europe/Paris
       HOST: 0.0.0.0
@@ -14,11 +16,26 @@ services:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # MCP / outils optionnels
+      CONTEXT7_API_KEY: ${CONTEXT7_API_KEY:-}
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:-}
+      GITHUB_TOOLSETS: ${GITHUB_TOOLSETS:-repos,issues,pull_requests,actions,code_security}
+      GITHUB_READ_ONLY: ${GITHUB_READ_ONLY:-true}
+      RTK_ENABLE: ${RTK_ENABLE:-true}
+      AGENTMEMORY_ENABLE: ${AGENTMEMORY_ENABLE:-true}
+      AGENTMEMORY_URL: ${AGENTMEMORY_URL:-http://127.0.0.1:3111}
+      AGENTMEMORY_AUTO_COMPRESS: ${AGENTMEMORY_AUTO_COMPRESS:-false}
+      CONTEXT7_MCP_ENABLE: ${CONTEXT7_MCP_ENABLE:-true}
+      PLAYWRIGHT_MCP_ENABLE: ${PLAYWRIGHT_MCP_ENABLE:-true}
+      GITHUB_MCP_ENABLE: ${GITHUB_MCP_ENABLE:-true}
+      CLAUDE_PLUGINS_BOOTSTRAP: ${CLAUDE_PLUGINS_BOOTSTRAP:-true}
+      CODEX_AUTO_LOGIN: ${CODEX_AUTO_LOGIN:-true}
     volumes:
       - /home/aerya/docker/claudecodeui/cloudcli:/root/.cloudcli
       - /home/aerya/docker/claudecodeui/claude:/root/.claude
       - /home/aerya/docker/claudecodeui/codex:/root/.codex
       - /home/aerya/docker/claudecodeui/gemini:/root/.gemini
+      - /home/aerya/docker/claudecodeui/agentmemory:/root/.agentmemory
       - /home/aerya/CodingOnline:/workspace/CodingOnline
     working_dir: /workspace/CodingOnline
     command: >
