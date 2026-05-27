@@ -11,6 +11,9 @@ Objectifs :
 - ajouter une traduction française via overlay,
 - mises à jour automatiques depuis l'upstream tous les jours à 4h30 UTC.
 
+Vous pouvez faire sans .env ni clés API dans les variables, tout peut se configurer dans la WebUI, je n'ai rien modifié.
+J'ai ajouté un petit hint pour OpenAI qui a de temps en temps du mal à se connecter (et comme je suis en IP:port, je ne peux pas m'authentifier depuis la WebUI).
+
 ## Authentification des agents
 
 Variables possibles dans `.env` :
