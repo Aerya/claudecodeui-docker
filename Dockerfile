@@ -109,22 +109,24 @@ RUN mkdir -p \
 
 # Install Open Agent Skills into a staging HOME at build time. The runtime entrypoint syncs them into /root,
 # because bind-mounting /root/.claude or /root/.codex would otherwise hide build-time files.
-RUN HOME=/opt/agent-defaults/root bash -lc '\
-  set -eux; \
-  install_skill() { \
-    repo="$1"; skill="$2"; \
-    npx -y skills@latest add "$repo" -g -a claude-code -a codex --skill "$skill" --copy --yes; \
-  }; \
-  install_skill https://github.com/anthropics/skills frontend-design; \
-  install_skill https://github.com/xixu-me/skills develop-userscripts; \
-  install_skill https://github.com/xixu-me/skills github-actions-docs; \
-  install_skill https://github.com/cloudflare/skills cloudflare; \
-  install_skill https://github.com/sickn33/antigravity-awesome-skills docker-expert; \
-  install_skill https://github.com/supercent-io/skills-template deployment-automation; \
-  install_skill https://github.com/vercel-labs/skills find-skills; \
-  install_skill https://github.com/roin-orca/skills simple; \
-  install_skill https://github.com/supercent-io/skills-template ui-component-patterns; \
-'
+# NOTE: supercent-io/skills-template currently fails to clone in public GitHub Actions, so
+# deployment-automation and ui-component-patterns are provided below as portable fallback skills.
+RUN <<'BASH'
+set -eux
+export HOME=/opt/agent-defaults/root
+install_skill() {
+  repo="$1"
+  skill="$2"
+  npx -y skills@latest add "$repo" -g -a claude-code -a codex --skill "$skill" --copy --yes
+}
+install_skill https://github.com/anthropics/skills frontend-design
+install_skill https://github.com/xixu-me/skills develop-userscripts
+install_skill https://github.com/xixu-me/skills github-actions-docs
+install_skill https://github.com/cloudflare/skills cloudflare
+install_skill https://github.com/sickn33/antigravity-awesome-skills docker-expert
+install_skill https://github.com/vercel-labs/skills find-skills
+install_skill https://github.com/roin-orca/skills simple
+BASH
 
 # UI/UX Pro Max: use its CLI/repo layout when the generic skills CLI cannot discover it reliably.
 RUN HOME=/opt/agent-defaults/root bash -lc '\
@@ -142,13 +144,28 @@ RUN HOME=/opt/agent-defaults/root bash -lc '\
   rm -rf "$tmp"; \
 '
 
-# Extra portable fallback skills for MCPMarket entries that do not expose a stable npx install command.
+# Extra portable fallback skills for entries that do not expose a stable public install command.
 RUN <<'BASH'
 set -eux
-
 for agent in .claude .codex; do
   base="/opt/agent-defaults/root/$agent/skills"
-  mkdir -p "$base/security-review" "$base/coding-standards-best-practices" "$base/performance-benchmark"
+  mkdir -p     "$base/deployment-automation"     "$base/ui-component-patterns"     "$base/security-review"     "$base/coding-standards-best-practices"     "$base/performance-benchmark"
+
+  cat > "$base/deployment-automation/SKILL.md" <<'SKILL'
+---
+name: deployment-automation
+description: Use when creating or reviewing deployment automation, Docker Compose deployments, GitHub Actions, release pipelines, rollbacks, healthchecks, environment variables, and production rollout steps.
+---
+Design practical deployment automation. Prefer repeatable scripts, explicit environment variables, healthchecks, rollback steps, and safe defaults. For Docker/Compose, validate mounts, ports, networks, secrets, restart policies, permissions, and update strategy. For GitHub Actions, keep permissions minimal, cache sensibly, tag images predictably, and make failures easy to diagnose.
+SKILL
+
+  cat > "$base/ui-component-patterns/SKILL.md" <<'SKILL'
+---
+name: ui-component-patterns
+description: Use when designing or refactoring frontend components, UI states, reusable React/Vue patterns, forms, dashboards, responsive layouts, accessibility, and design-system consistency.
+---
+Build clear reusable UI components. Prefer small components, predictable props, accessible markup, keyboard support, loading/empty/error states, responsive layouts, and consistent spacing. Avoid over-engineering; keep components easy to reuse and test. When editing UI, preserve existing design language unless asked to redesign.
+SKILL
 
   cat > "$base/security-review/SKILL.md" <<'SKILL'
 ---
@@ -173,6 +190,7 @@ description: Use for measuring performance, setting baselines, comparing before/
 ---
 Create or run lightweight benchmarks before claiming performance improvement. Prefer reproducible commands, clear before/after metrics, and saved baselines when useful. Look at build time, startup time, bundle size, Docker image size, API p50/p95/p99 latency, memory use, and frontend Core Web Vitals depending on the project. Separate measured facts from assumptions.
 SKILL
+
 done
 BASH
 
