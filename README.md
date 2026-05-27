@@ -6,10 +6,10 @@ Image Docker GHCR personnelle pour CloudCLI / Claude Code UI, basée sur l'upstr
 
 Objectifs :
 
-- builder automatiquement une image `ghcr.io/aerya/claudecodeui-docker:latest` ;
-- intégrer Claude Code, Codex et Gemini CLI dans l'image ;
-- ajouter une traduction française via overlay ;
-- lancer ensuite le tout avec Docker Compose / Dockge, sans build local sur le serveur.
+- builder automatiquement une image `ghcr.io/aerya/claudecodeui-docker:latest`,
+- intégrer Claude Code, Codex et Gemini CLI dans l'image,
+- ajouter une traduction française via overlay,
+- mises à jour automatiques depuis l'upstream tous les jours à 4h30 UTC.
 
 ## Authentification des agents
 
