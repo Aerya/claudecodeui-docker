@@ -1,0 +1,190 @@
+name: Build and publish CloudCLI Docker image
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily at 04:17 UTC
+    - cron: "17 4 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/build-ghcr.yml"
+      - "scripts/**"
+      - "overrides/**"
+      - "compose.yml"
+      - ".env.example"
+      - "README.md"
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: claudecodeui-docker-build
+  cancel-in-progress: true
+
+env:
+  UPSTREAM_REPO: siteboon/claudecodeui
+  IMAGE_BASENAME: claudecodeui-docker
+  PLATFORMS: linux/amd64
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v6
+
+      - name: Checkout upstream CloudCLI source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git clone --depth 1 "https://github.com/${UPSTREAM_REPO}.git" upstream
+
+          UPSTREAM_SHA="$(git -C upstream rev-parse --short=12 HEAD)"
+          CLOUDCLI_VERSION="$(node -p "require('./upstream/package.json').version")"
+          BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          IMAGE_OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          IMAGE="ghcr.io/${IMAGE_OWNER}/${IMAGE_BASENAME}"
+
+          echo "UPSTREAM_SHA=${UPSTREAM_SHA}" >> "$GITHUB_ENV"
+          echo "CLOUDCLI_VERSION=${CLOUDCLI_VERSION}" >> "$GITHUB_ENV"
+          echo "BUILD_DATE=${BUILD_DATE}" >> "$GITHUB_ENV"
+          echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
+
+          echo "Upstream SHA: ${UPSTREAM_SHA}"
+          echo "CloudCLI version: ${CLOUDCLI_VERSION}"
+          echo "Image: ${IMAGE}"
+
+      - name: Apply French locale overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p upstream/src/i18n/locales/fr
+          cp -R overrides/src/i18n/locales/fr/. upstream/src/i18n/locales/fr/
+          node scripts/apply-french-locale.mjs
+
+      - name: Generate Dockerfile
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p generated
+
+          cat > generated/Dockerfile <<'DOCKERFILE'
+          FROM node:22-bookworm
+
+          ARG CLOUDCLI_VERSION
+          ARG UPSTREAM_SHA
+          ARG BUILD_DATE
+
+          LABEL org.opencontainers.image.title="CloudCLI Docker"
+          LABEL org.opencontainers.image.description="Self-hosted CloudCLI web UI with Claude Code, Codex and Gemini CLI"
+          LABEL org.opencontainers.image.source="https://github.com/siteboon/claudecodeui"
+          LABEL org.opencontainers.image.version="${CLOUDCLI_VERSION}"
+          LABEL org.opencontainers.image.revision="${UPSTREAM_SHA}"
+          LABEL org.opencontainers.image.created="${BUILD_DATE}"
+          LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
+
+          ENV DEBIAN_FRONTEND=noninteractive
+          ENV HUSKY=0
+          ENV HOST=0.0.0.0
+          ENV SERVER_PORT=3001
+          ENV DATABASE_PATH=/root/.cloudcli/auth.db
+
+          RUN apt-get update && apt-get install -y --no-install-recommends \
+              bash \
+              ca-certificates \
+              curl \
+              git \
+              jq \
+              openssh-client \
+              procps \
+              ripgrep \
+              fd-find \
+              sqlite3 \
+              python3 \
+              python3-setuptools \
+              build-essential \
+              make \
+              g++ \
+              zip \
+              unzip \
+              tree \
+              vim-tiny \
+            && ln -sf /usr/bin/fdfind /usr/local/bin/fd \
+            && rm -rf /var/lib/apt/lists/*
+
+          WORKDIR /opt/claudecodeui
+
+          COPY upstream/package*.json ./
+          RUN npm ci
+
+          COPY upstream/ ./
+
+          RUN npm run build \
+            && mkdir -p /tmp/cloudcli-pack \
+            && npm pack --pack-destination /tmp/cloudcli-pack \
+            && npm install -g /tmp/cloudcli-pack/*.tgz
+
+          RUN npm install -g \
+              @anthropic-ai/claude-code@latest \
+              @openai/codex@latest \
+              @google/gemini-cli@latest \
+            && npm cache clean --force
+
+          RUN mkdir -p \
+              /workspace \
+              /root/.cloudcli \
+              /root/.claude \
+              /root/.codex \
+              /root/.gemini
+
+          WORKDIR /workspace
+
+          EXPOSE 3001
+
+          CMD ["bash", "-lc", "cloudcli"]
+          DOCKERFILE
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: generated/Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+          pull: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ env.UPSTREAM_SHA }}
+            ${{ env.IMAGE }}:v${{ env.CLOUDCLI_VERSION }}
+          labels: |
+            org.opencontainers.image.title=CloudCLI Docker
+            org.opencontainers.image.source=https://github.com/siteboon/claudecodeui
+            org.opencontainers.image.version=${{ env.CLOUDCLI_VERSION }}
+            org.opencontainers.image.revision=${{ env.UPSTREAM_SHA }}
+            org.opencontainers.image.created=${{ env.BUILD_DATE }}
+          build-args: |
+            CLOUDCLI_VERSION=${{ env.CLOUDCLI_VERSION }}
+            UPSTREAM_SHA=${{ env.UPSTREAM_SHA }}
+            BUILD_DATE=${{ env.BUILD_DATE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

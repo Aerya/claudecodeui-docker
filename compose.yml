@@ -1,0 +1,22 @@
+services:
+  claudecodeui:
+    image: ghcr.io/aerya/claudecodeui-docker:latest
+    container_name: claudecodeui
+    restart: always
+    ports:
+      - "3002:3001"
+    environment:
+      TZ: Europe/Paris
+      HOST: 0.0.0.0
+      SERVER_PORT: 3001
+      DATABASE_PATH: /root/.cloudcli/auth.db
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    volumes:
+      - /home/aerya/docker/claudecodeui/cloudcli:/root/.cloudcli
+      - /home/aerya/docker/claudecodeui/claude:/root/.claude
+      - /home/aerya/docker/claudecodeui/codex:/root/.codex
+      - /home/aerya/docker/claudecodeui/gemini:/root/.gemini
+      - /home/aerya/CodingOnline:/workspace/CodingOnline
+    working_dir: /workspace/CodingOnline

@@ -1,0 +1,142 @@
+{
+  "notConfigured": {
+    "title": "TaskMaster AI n'est pas configuré",
+    "description": "TaskMaster aide à découper les projets complexes en tâches gérables avec une assistance IA",
+    "whatIsTitle": " Qu'est-ce que TaskMaster ?",
+    "features": {
+      "aiPowered": "Gestion de tâches par IA : découpez les projets complexes en sous-tâches gérables",
+      "prdTemplates": "Modèles PRD : générez des tâches depuis des Product Requirements Documents",
+      "dependencyTracking": "Suivi des dépendances : comprenez les relations entre tâches et l'ordre d'exécution",
+      "progressVisualization": "Visualisation de progression : tableaux Kanban et analyses détaillées",
+      "cliIntegration": "Intégration CLI : utilisez les commandes taskmaster pour les workflows avancés"
+    },
+    "initializeButton": "Initialiser TaskMaster AI"
+  },
+  "gettingStarted": {
+    "title": "Premiers pas avec TaskMaster",
+    "subtitle": "TaskMaster est initialisé ! Voici la suite :",
+    "steps": {
+      "createPRD": {
+        "title": "Créer un Product Requirements Document (PRD)",
+        "description": "Discutez de votre idée de projet et créez un PRD décrivant ce que vous voulez construire.",
+        "addButton": "Ajouter un PRD",
+        "existingPRDs": "PRD existants :"
+      },
+      "generateTasks": {
+        "title": "Générer les tâches depuis le PRD",
+        "description": "Une fois le PRD prêt, demandez à votre assistant IA de l'analyser ; TaskMaster le découpera automatiquement en tâches gérables avec des détails d'implémentation."
+      },
+      "analyzeTasks": {
+        "title": "Analyser et détailler les tâches",
+        "description": "Demandez à votre assistant IA d'analyser la complexité des tâches et de les découper en sous-tâches détaillées."
+      },
+      "startBuilding": {
+        "title": "Commencer à construire",
+        "description": "Demandez à votre assistant IA de commencer les tâches, mettre à jour leur statut et ajouter de nouvelles tâches au fil du projet."
+      }
+    },
+    "tip": " Astuce : commencez avec un PRD pour tirer le meilleur de la génération de tâches assistée par IA de TaskMaster"
+  },
+  "setupModal": {
+    "title": "Configuration TaskMaster",
+    "subtitle": "CLI interactif pour {{projectName}}",
+    "willStart": "L'initialisation de TaskMaster démarrera automatiquement",
+    "completed": "Configuration TaskMaster terminée ! Vous pouvez fermer cette fenêtre.",
+    "closeButton": "Fermer",
+    "closeContinueButton": "Fermer et continuer"
+  },
+  "helpGuide": {
+    "title": "Premiers pas avec TaskMaster",
+    "subtitle": "Votre guide pour une gestion de tâches productive",
+    "examples": {
+      "parsePRD": " Exemple :\n\"Je viens d'initialiser un nouveau projet avec Claude Task Master.\nJ'ai un PRD dans .taskmaster/docs/prd.txt. Peux-tu m'aider à l'analyser et à créer les premières tâches ?\"",
+      "expandTask": " Exemple :\n\"La tâche 5 semble complexe.\nPeux-tu la découper en sous-tâches ?\"",
+      "addTask": " Exemple :\n\"Ajoute une nouvelle tâche pour implémenter l'upload d'image de profil avec Cloudinary et rechercher la meilleure approche.\""
+    },
+    "moreExamples": "Voir plus d'exemples et de modèles d'utilisation →",
+    "proTips": {
+      "title": " Conseils pro",
+      "search": "Utilisez la barre de recherche pour trouver rapidement des tâches spécifiques",
+      "views": "Basculez entre les vues Kanban, Liste et Grille avec les boutons de vue",
+      "filters": "Utilisez les filtres pour vous concentrer sur certains statuts ou priorités",
+      "details": "Cliquez sur une tâche pour voir ses détails et gérer les sous-tâches"
+    },
+    "learnMore": {
+      "title": " En savoir plus",
+      "description": "TaskMaster AI est un système avancé de gestion des tâches conçu pour les développeurs.\nConsultez la documentation, les exemples et contribuez au projet.",
+      "githubButton": "Voir sur GitHub"
+    }
+  },
+  "search": {
+    "placeholder": "Rechercher des tâches..."
+  },
+  "filters": {
+    "button": "Filtres",
+    "status": "Statut",
+    "priority": "Priorité",
+    "sortBy": "Trier par",
+    "allStatuses": "Tous les statuts",
+    "allPriorities": "Toutes les priorités",
+    "showing": "Affichage de {{filtered}} sur {{total}} tâches",
+    "clearFilters": "Effacer les filtres"
+  },
+  "sort": {
+    "id": "ID",
+    "status": "Statut",
+    "priority": "Priorité",
+    "idAsc": "ID (croissant)",
+    "idDesc": "ID (décroissant)",
+    "titleAsc": "Titre (A-Z)",
+    "titleDesc": "Titre (Z-A)",
+    "statusAsc": "Statut (en attente d'abord)",
+    "statusDesc": "Statut (terminées d'abord)",
+    "priorityAsc": "Priorité (haute d'abord)",
+    "priorityDesc": "Priorité (basse d'abord)"
+  },
+  "views": {
+    "kanban": "Vue Kanban",
+    "list": "Vue liste",
+    "grid": "Vue grille"
+  },
+  "kanban": {
+    "pending": " À faire",
+    "inProgress": " En cours",
+    "done": "✅ Terminé",
+    "blocked": " Bloqué",
+    "deferred": "⏳ Reporté",
+    "cancelled": "❌ Annulé",
+    "noTasksYet": "Aucune tâche pour le moment",
+    "tasksWillAppear": "Les tâches apparaîtront ici",
+    "moveTasksHere": "Déplacez les tâches ici lorsqu'elles démarrent",
+    "completedTasksHere": "Les tâches terminées apparaissent ici",
+    "statusTasksHere": "Les tâches avec ce statut apparaîtront ici"
+  },
+  "buttons": {
+    "help": "Guide de démarrage TaskMaster",
+    "prds": "PRD",
+    "addPRD": "Ajouter un PRD",
+    "addTask": "Ajouter une tâche",
+    "createNewPRD": "Créer un nouveau PRD",
+    "prdsAvailable": "{{count}} PRD disponible(s)"
+  },
+  "prd": {
+    "modified": "Modifié : {{date}}"
+  },
+  "statuses": {
+    "pending": "En attente",
+    "in-progress": "En cours",
+    "done": "Terminé",
+    "blocked": "Bloqué",
+    "deferred": "Reporté",
+    "cancelled": "Annulé"
+  },
+  "priorities": {
+    "high": "Haute",
+    "medium": "Moyenne",
+    "low": "Basse"
+  },
+  "noMatchingTasks": {
+    "title": "Aucune tâche ne correspond à vos filtres",
+    "description": "Essayez d'ajuster votre recherche ou vos critères de filtre."
+  }
+}
