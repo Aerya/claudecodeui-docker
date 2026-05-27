@@ -143,32 +143,38 @@ RUN HOME=/opt/agent-defaults/root bash -lc '\
 '
 
 # Extra portable fallback skills for MCPMarket entries that do not expose a stable npx install command.
-RUN bash -lc 'set -eux; \
-  for agent in .claude .codex; do \
-    base="/opt/agent-defaults/root/$agent/skills"; \
-    mkdir -p "$base/security-review" "$base/coding-standards-best-practices" "$base/performance-benchmark"; \
-    cat > "$base/security-review/SKILL.md" <<"SKILL"; \
+RUN <<'BASH'
+set -eux
+
+for agent in .claude .codex; do
+  base="/opt/agent-defaults/root/$agent/skills"
+  mkdir -p "$base/security-review" "$base/coding-standards-best-practices" "$base/performance-benchmark"
+
+  cat > "$base/security-review/SKILL.md" <<'SKILL'
 ---
 name: security-review
 description: Use for security audits, hardening, secrets checks, auth/API validation, Docker/CI security review, XSS/CSRF/SQL injection checks, and pre-production reviews.
 ---
 Perform a practical security review. Check for secrets, unsafe auth/session handling, injection risks, path traversal, unsafe shell execution, insecure Docker/CI patterns, overbroad permissions, missing validation, and unsafe defaults. Prefer concrete fixes with file paths and minimal changes. For code changes, avoid destructive operations and explain risk level.
 SKILL
-    cat > "$base/coding-standards-best-practices/SKILL.md" <<"SKILL"; \
+
+  cat > "$base/coding-standards-best-practices/SKILL.md" <<'SKILL'
 ---
 name: coding-standards-best-practices
 description: Use when designing, refactoring, or reviewing TypeScript, JavaScript, React, Node, Python, Docker, and CI code for maintainability, clarity, architecture, naming, and best practices.
 ---
 Apply pragmatic coding standards: small cohesive modules, explicit names, strict types where available, clear error handling, testable boundaries, simple APIs, accessible UI, minimal dependencies, and no speculative abstraction. Prefer KISS/YAGNI over cleverness. When editing, keep diffs narrow and consistent with the existing project style.
 SKILL
-    cat > "$base/performance-benchmark/SKILL.md" <<"SKILL"; \
+
+  cat > "$base/performance-benchmark/SKILL.md" <<'SKILL'
 ---
 name: performance-benchmark
 description: Use for measuring performance, setting baselines, comparing before/after changes, checking build/test latency, API latency, frontend Web Vitals, Docker image size, and regression risk.
 ---
 Create or run lightweight benchmarks before claiming performance improvement. Prefer reproducible commands, clear before/after metrics, and saved baselines when useful. Look at build time, startup time, bundle size, Docker image size, API p50/p95/p99 latency, memory use, and frontend Core Web Vitals depending on the project. Separate measured facts from assumptions.
 SKILL
-  done'
+done
+BASH
 
 COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
