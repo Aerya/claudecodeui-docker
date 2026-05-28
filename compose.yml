@@ -4,16 +4,17 @@ services:
     container_name: claudecodeui
     restart: always
     ports:
-      - "3002:3001"
+      - 3002:3001
       # Optionnel, exposer derrière reverse proxy/auth pour le viewer agentmemory
-      # - "3003:3113"
+      # - 3003:3113
     environment:
       TZ: Europe/Paris
       HOST: 0.0.0.0
       SERVER_PORT: 3001
       DATABASE_PATH: /root/.cloudcli/auth.db
       WORKSPACES_ROOT: /workspace
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # => https://code.claude.com/docs/en/authentication : Anthropic indique que si une subscription Claude est active mais que ANTHROPIC_API_KEY est définie, la clé API peut prendre le dessus ; pour revenir à l’abonnement, il faut retirer/unset la variable et vérifier avec /status
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       # MCP / outils optionnels
