@@ -14,14 +14,6 @@ ARG CLOUDCLI_VERSION
 ARG UPSTREAM_SHA
 ARG BUILD_DATE
 
-LABEL org.opencontainers.image.title="CloudCLI Docker"
-LABEL org.opencontainers.image.description="Self-hosted CloudCLI web UI with Claude Code, Codex, Gemini, MCP servers and agent skills"
-LABEL org.opencontainers.image.source="https://github.com/siteboon/claudecodeui"
-LABEL org.opencontainers.image.version="${CLOUDCLI_VERSION}"
-LABEL org.opencontainers.image.revision="${UPSTREAM_SHA}"
-LABEL org.opencontainers.image.created="${BUILD_DATE}"
-LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
-
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HUSKY=0
 ENV HOST=0.0.0.0
@@ -196,6 +188,14 @@ BASH
 
 COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+LABEL org.opencontainers.image.title="CloudCLI Docker"
+LABEL org.opencontainers.image.description="Self-hosted CloudCLI web UI with Claude Code, Codex, Gemini, MCP servers and agent skills"
+LABEL org.opencontainers.image.source="https://github.com/siteboon/claudecodeui"
+LABEL org.opencontainers.image.version="${CLOUDCLI_VERSION}"
+LABEL org.opencontainers.image.revision="${UPSTREAM_SHA}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
 
 WORKDIR /workspace
 EXPOSE 3001
