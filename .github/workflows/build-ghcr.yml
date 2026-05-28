@@ -89,6 +89,8 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
           push: true
           pull: true
+          provenance: false
+          sbom: false
           tags: |
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ env.UPSTREAM_SHA }}
@@ -103,5 +105,5 @@ jobs:
             CLOUDCLI_VERSION=${{ env.CLOUDCLI_VERSION }}
             UPSTREAM_SHA=${{ env.UPSTREAM_SHA }}
             BUILD_DATE=${{ env.BUILD_DATE }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
