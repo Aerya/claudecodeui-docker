@@ -124,5 +124,5 @@ fi
 export HOST="${HOST:-0.0.0.0}"
 export SERVER_PORT="${SERVER_PORT:-3001}"
 
-log "starting CloudCLI on ${HOST:-0.0.0.0}:${SERVER_PORT:-3001}"
-exec cloudcli start --host "${HOST:-0.0.0.0}" --port "${SERVER_PORT:-3001}"
+log "starting CloudCLI on ${HOST}:${SERVER_PORT}"
+exec cloudcli start --port "${SERVER_PORT}"
