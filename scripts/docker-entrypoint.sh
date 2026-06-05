@@ -76,6 +76,9 @@ if [ "${CLAUDE_PLUGINS_BOOTSTRAP:-true}" = "true" ] && command -v claude >/dev/n
 
     timeout 120 claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill >/tmp/plugin-uipro.market.log 2>&1
     timeout 120 claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill --scope user >/tmp/plugin-uipro.install.log 2>&1
+
+    timeout 120 claude plugin marketplace add EveryInc/compound-engineering-plugin >/tmp/plugin-compound.market.log 2>&1
+    timeout 120 claude plugin install compound-engineering --scope user >/tmp/plugin-compound.install.log 2>&1
     set -e
     date -u > "$marker"
   fi
@@ -97,6 +100,13 @@ if command -v claude >/dev/null 2>&1; then
 
   if [ "${GITHUB_MCP_ENABLE:-true}" = "true" ] && [ -n "${GITHUB_PERSONAL_ACCESS_TOKEN:-}" ]; then
     claude mcp add --scope user github -- github-mcp-server stdio >/tmp/claude-mcp-github.log 2>&1 || true
+  fi
+
+  if [ "${SUPERMEMORY_MCP_ENABLE:-true}" = "true" ]; then
+    supermemory_marker=/root/.claude/.agentpack-supermemory-mcp-v1
+    if [ ! -f "$supermemory_marker" ]; then
+      timeout 120 npx -y install-mcp@latest https://mcp.supermemory.ai/mcp --client claude </dev/null >/tmp/claude-mcp-supermemory.log 2>&1 && date -u > "$supermemory_marker" || true
+    fi
   fi
 fi
 

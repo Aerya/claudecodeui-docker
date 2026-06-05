@@ -45,6 +45,7 @@ Ca se configure aussi depuis le terminal intégré selon les CLIs.
 - `github-mcp-server`, compilé depuis `github/github-mcp-server`
 - `claude-flow@alpha`
 - `ruv-swarm`
+- `supermemory` MCP (https://app.supermemory.ai) — installé via `npx -y install-mcp@latest https://mcp.supermemory.ai/mcp --client claude`
 
 ### Skills installées au build dans `/opt/agent-defaults/root`
 
@@ -71,6 +72,7 @@ Copiées automatiquement au démarrage vers `/root/.claude` et `/root/.codex` :
 - `everything-claude-code` / `ecc`
 - `claude-hud`
 - `ui-ux-pro-max`
+- `compound-engineering` (https://github.com/EveryInc/compound-engineering-plugin)
 
 ## Notes licence
 
