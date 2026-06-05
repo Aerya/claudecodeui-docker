@@ -51,7 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /opt/claudecodeui
 COPY upstream/ ./
-RUN npm ci
+RUN npm install --no-audit --no-fund
 RUN npm run build \
   && mkdir -p /tmp/cloudcli-pack \
   && npm pack --pack-destination /tmp/cloudcli-pack \
