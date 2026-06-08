@@ -35,8 +35,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ripgrep \
     fd-find \
     sqlite3 \
+    gh \
     python3 \
     python3-pip \
+    python3-venv \
     python3-setuptools \
     build-essential \
     make \
@@ -93,10 +95,12 @@ RUN mkdir -p \
     /root/.cloudcli \
     /root/.claude \
     /root/.codex \
+    /root/.agents \
     /root/.gemini \
     /root/.agentmemory \
     /opt/agent-defaults/root/.claude/skills \
     /opt/agent-defaults/root/.codex/skills \
+    /opt/agent-defaults/root/.agents/skills \
     /opt/agent-defaults/root/.gemini
 
 # Install Open Agent Skills into a staging HOME at build time. The runtime entrypoint syncs them into /root,
@@ -118,7 +122,30 @@ install_skill https://github.com/cloudflare/skills cloudflare
 install_skill https://github.com/sickn33/antigravity-awesome-skills docker-expert
 install_skill https://github.com/vercel-labs/skills find-skills
 install_skill https://github.com/roin-orca/skills simple
+install_skill https://github.com/Panniantong/Agent-Reach agent-reach
+
+npx -y skills@latest add mattpocock/skills -g -a claude-code -a codex --copy --yes
 BASH
+
+# Agent Reach CLI: keep it in an isolated venv to avoid Debian's externally-managed Python.
+RUN python3 -m venv /opt/agent-defaults/root/.agent-reach-venv \
+  && /opt/agent-defaults/root/.agent-reach-venv/bin/pip install --no-cache-dir --upgrade pip \
+  && /opt/agent-defaults/root/.agent-reach-venv/bin/pip install --no-cache-dir https://github.com/Panniantong/agent-reach/archive/main.zip \
+  && ln -sf /opt/agent-defaults/root/.agent-reach-venv/bin/agent-reach /usr/local/bin/agent-reach \
+  && agent-reach --help >/dev/null
+
+# Understand-Anything installs into ~/.agents/skills for Codex-like platforms.
+# Mirror those skills into Claude/Codex defaults so the existing startup sync picks them up.
+RUN HOME=/opt/agent-defaults/root bash -lc '\
+  set -eux; \
+  curl -fsSL https://raw.githubusercontent.com/Lum1104/Understand-Anything/main/install.sh | bash -s codex; \
+  mkdir -p "$HOME/.claude/skills" "$HOME/.codex/skills"; \
+  for skill in "$HOME/.agents/skills"/*; do \
+    [ -e "$skill" ] || continue; \
+    cp -a "$skill" "$HOME/.claude/skills/"; \
+    cp -a "$skill" "$HOME/.codex/skills/"; \
+  done; \
+'
 
 # UI/UX Pro Max: use its CLI/repo layout when the generic skills CLI cannot discover it reliably.
 RUN HOME=/opt/agent-defaults/root bash -lc '\

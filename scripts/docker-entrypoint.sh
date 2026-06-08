@@ -8,6 +8,7 @@ mkdir -p \
   /root/.cloudcli \
   /root/.claude \
   /root/.codex \
+  /root/.agents \
   /root/.gemini \
   /root/.agentmemory \
   "${WORKSPACES_ROOT:-/workspace}"
@@ -24,6 +25,7 @@ sync_dir_once() {
 
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.claude" /root/.claude
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.codex" /root/.codex
+sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.agents" /root/.agents
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.gemini" /root/.gemini
 
 # RTK init: idempotent and non-fatal.

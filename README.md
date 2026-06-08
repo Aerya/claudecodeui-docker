@@ -46,10 +46,11 @@ Ca se configure aussi depuis le terminal intégré selon les CLIs.
 - `claude-flow@alpha`
 - `ruv-swarm`
 - `supermemory` MCP (https://app.supermemory.ai) — installé via `npx -y install-mcp@latest https://mcp.supermemory.ai/mcp --client claude`
+- `agent-reach` (https://github.com/Panniantong/Agent-Reach), installé dans un venv dédié et exposé dans le `PATH`
 
 ### Skills installées au build dans `/opt/agent-defaults/root`
 
-Copiées automatiquement au démarrage vers `/root/.claude` et `/root/.codex` :
+Copiées automatiquement au démarrage vers `/root/.claude`, `/root/.codex` et `/root/.agents` :
 - `frontend-design`
 - `develop-userscripts`
 - `github-actions-docs`
@@ -63,6 +64,9 @@ Copiées automatiquement au démarrage vers `/root/.claude` et `/root/.codex` :
 - `security-review`
 - `coding-standards-best-practices`
 - `performance-benchmark`
+- `agent-reach` (https://github.com/Panniantong/Agent-Reach)
+- `Understand-Anything` (https://github.com/Lum1104/Understand-Anything)
+- `mattpocock/skills` (https://github.com/mattpocock/skills)
 
 ## Claude plugins
 
