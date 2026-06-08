@@ -130,7 +130,11 @@ BASH
 # Agent Reach CLI: keep it in an isolated venv to avoid Debian's externally-managed Python.
 RUN python3 -m venv /opt/agent-defaults/root/.agent-reach-venv \
   && /opt/agent-defaults/root/.agent-reach-venv/bin/pip install --no-cache-dir --upgrade pip \
-  && /opt/agent-defaults/root/.agent-reach-venv/bin/pip install --no-cache-dir https://github.com/Panniantong/agent-reach/archive/main.zip \
+  && tmp="$(mktemp -d)" \
+  && git clone --depth 1 https://github.com/Panniantong/agent-reach.git "$tmp/agent-reach" \
+  && sed -i '/^"agent_reach\/guides"/d; /^"agent_reach\/skill"/d; /^"agent_reach\/scripts"/d' "$tmp/agent-reach/pyproject.toml" \
+  && /opt/agent-defaults/root/.agent-reach-venv/bin/pip install --no-cache-dir "$tmp/agent-reach" \
+  && rm -rf "$tmp" \
   && ln -sf /opt/agent-defaults/root/.agent-reach-venv/bin/agent-reach /usr/local/bin/agent-reach \
   && agent-reach --help >/dev/null
 
