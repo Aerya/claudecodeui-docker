@@ -28,6 +28,21 @@ sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.codex" /root/.c
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.agents" /root/.agents
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.gemini" /root/.gemini
 
+# Install one shared maintenance policy under each tool's native global
+# instruction filename. Existing user instructions remain authoritative.
+maintenance_policy=/opt/agent-defaults/MAINTENANCE_POLICY.md
+if [ -s "$maintenance_policy" ]; then
+  for target in /root/.codex/AGENTS.md /root/.claude/CLAUDE.md; do
+    marker='<!-- claudecodeui-docker:maintenance-policy -->'
+    if ! grep -Fq "$marker" "$target" 2>/dev/null; then
+      {
+        printf '\n%s\n' "$marker"
+        cat "$maintenance_policy"
+      } >> "$target"
+    fi
+  done
+fi
+
 # RTK init: idempotent and non-fatal.
 if [ "${RTK_ENABLE:-true}" = "true" ] && command -v rtk >/dev/null 2>&1; then
   log "initializing RTK for Claude/Codex if needed"
