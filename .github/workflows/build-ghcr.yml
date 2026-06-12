@@ -68,6 +68,12 @@ jobs:
           cp -R overrides/src/i18n/locales/fr/. upstream/src/i18n/locales/fr/
           node scripts/apply-french-locale.mjs
 
+      - name: Apply container compatibility patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/apply-container-patches.mjs
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 

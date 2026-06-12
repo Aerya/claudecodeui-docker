@@ -27,6 +27,8 @@ GEMINI_API_KEY=
 ```
 Ca se configure aussi depuis le terminal intégré selon les CLIs. Pour utiliser un abonnement Claude, laisser `ANTHROPIC_API_KEY` vide puis exécuter `claude auth login` dans le terminal intégré. Le dossier `/root/.claude` est persistant.
 
+Le bouton de connexion Claude de l'upstream est patché au build pour exécuter `claude auth login`. La commande upstream `claude --dangerously-skip-permissions /login` est incompatible avec le processus `root` du conteneur.
+
 Le bootstrap automatique des plugins Claude est désactivé par défaut afin de ne pas bloquer le démarrage ni perturber le diagnostic d'authentification. Pour l'activer :
 
 ```env
