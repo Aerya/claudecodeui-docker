@@ -13,8 +13,11 @@ services:
       SERVER_PORT: 3001
       DATABASE_PATH: /root/.cloudcli/auth.db
       WORKSPACES_ROOT: /workspace
-      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      # => https://code.claude.com/docs/en/authentication : Anthropic indique que si une subscription Claude est active mais que ANTHROPIC_API_KEY est définie, la clé API peut prendre le dessus ; pour revenir à l’abonnement, il faut retirer/unset la variable et vérifier avec /status
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_AUTH_TOKEN: ${ANTHROPIC_AUTH_TOKEN:-}
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
+      # Une clé API non vide prend la priorité sur la connexion par abonnement.
+      # Laisser ANTHROPIC_API_KEY vide pour utiliser `claude auth login` dans le terminal intégré.
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       # MCP / outils optionnels
@@ -29,7 +32,7 @@ services:
       CONTEXT7_MCP_ENABLE: ${CONTEXT7_MCP_ENABLE:-true}
       PLAYWRIGHT_MCP_ENABLE: ${PLAYWRIGHT_MCP_ENABLE:-true}
       GITHUB_MCP_ENABLE: ${GITHUB_MCP_ENABLE:-true}
-      CLAUDE_PLUGINS_BOOTSTRAP: ${CLAUDE_PLUGINS_BOOTSTRAP:-true}
+      CLAUDE_PLUGINS_BOOTSTRAP: ${CLAUDE_PLUGINS_BOOTSTRAP:-false}
       CODEX_AUTO_LOGIN: ${CODEX_AUTO_LOGIN:-true}
     volumes:
       - /home/aerya/docker/claudecodeui/cloudcli:/root/.cloudcli
