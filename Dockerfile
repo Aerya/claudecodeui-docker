@@ -218,8 +218,9 @@ done
 BASH
 
 COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY scripts/pr-monitor.sh /usr/local/bin/pr-monitor.sh
 COPY MAINTENANCE_POLICY.md /opt/agent-defaults/MAINTENANCE_POLICY.md
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/pr-monitor.sh
 
 WORKDIR /workspace
 EXPOSE 3001
