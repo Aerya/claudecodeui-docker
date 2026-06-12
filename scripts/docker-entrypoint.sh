@@ -28,19 +28,19 @@ sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.codex" /root/.c
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.agents" /root/.agents
 sync_dir_once "${AGENT_DEFAULTS_ROOT:-/opt/agent-defaults/root}/.gemini" /root/.gemini
 
-# Install one shared maintenance policy under each tool's native global
-# instruction filename. Existing user instructions remain authoritative.
-maintenance_policy=/opt/agent-defaults/MAINTENANCE_POLICY.md
-if [ -s "$maintenance_policy" ]; then
-  for target in /root/.codex/AGENTS.md /root/.claude/CLAUDE.md; do
-    marker='<!-- claudecodeui-docker:maintenance-policy -->'
-    if ! grep -Fq "$marker" "$target" 2>/dev/null; then
-      {
-        printf '\n%s\n' "$marker"
-        cat "$maintenance_policy"
-      } >> "$target"
-    fi
-  done
+if command -v claude >/dev/null 2>&1; then
+  claude_version="$(timeout 10 claude --version 2>/dev/null || true)"
+  if [ -n "$claude_version" ]; then
+    log "Claude Code available: $claude_version"
+  else
+    warn "Claude Code is installed but did not answer to --version"
+  fi
+
+  if [ -z "${ANTHROPIC_API_KEY:-}" ] && [ -z "${ANTHROPIC_AUTH_TOKEN:-}" ] && [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ ! -s /root/.claude/.credentials.json ]; then
+    warn "Claude Code is not authenticated; run 'claude auth login' in the integrated terminal"
+  fi
+else
+  warn "Claude Code executable not found in PATH"
 fi
 
 # RTK init: idempotent and non-fatal.
@@ -70,7 +70,7 @@ fi
 
 # Claude Code plugins: cannot be made fully reliable at Docker build time when /root/.claude is bind-mounted.
 # This bootstrap runs once per persistent volume and does not require remembering slash commands.
-if [ "${CLAUDE_PLUGINS_BOOTSTRAP:-true}" = "true" ] && command -v claude >/dev/null 2>&1; then
+if [ "${CLAUDE_PLUGINS_BOOTSTRAP:-false}" = "true" ] && command -v claude >/dev/null 2>&1; then
   marker=/root/.claude/.agentpack-claude-plugins-v1
   if [ ! -f "$marker" ]; then
     log "bootstrapping Claude Code plugins, best effort"

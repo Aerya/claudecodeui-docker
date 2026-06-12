@@ -20,10 +20,18 @@ Variables possibles dans `.env` :
 
 ```env
 ANTHROPIC_API_KEY=
+ANTHROPIC_AUTH_TOKEN=
+CLAUDE_CODE_OAUTH_TOKEN=
 OPENAI_API_KEY=
 GEMINI_API_KEY=
 ```
-Ca se configure aussi depuis le terminal intégré selon les CLIs.
+Ca se configure aussi depuis le terminal intégré selon les CLIs. Pour utiliser un abonnement Claude, laisser `ANTHROPIC_API_KEY` vide puis exécuter `claude auth login` dans le terminal intégré. Le dossier `/root/.claude` est persistant.
+
+Le bootstrap automatique des plugins Claude est désactivé par défaut afin de ne pas bloquer le démarrage ni perturber le diagnostic d'authentification. Pour l'activer :
+
+```env
+CLAUDE_PLUGINS_BOOTSTRAP=true
+```
 
 
 ### CLIs agents
