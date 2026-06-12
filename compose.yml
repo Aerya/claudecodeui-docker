@@ -41,4 +41,28 @@ services:
       - /home/aerya/docker/claudecodeui/gemini:/root/.gemini
       - /home/aerya/docker/claudecodeui/agentmemory:/root/.agentmemory
       - /home/aerya/CodingOnline:/workspace/CodingOnline
+      - /home/aerya/docker/claudecodeui/private-context:/workspace/private-context:ro
     working_dir: /workspace/CodingOnline
+
+  pr-review-service:
+    image: ghcr.io/aerya/claudecodeui-docker:latest
+    container_name: pr-review-service
+    restart: always
+    environment:
+      TZ: Europe/Paris
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:-}
+      PR_MONITOR_ENABLED: ${PR_MONITOR_ENABLED:-true}
+      PR_MONITOR_REPOSITORY: ${PR_MONITOR_REPOSITORY:-Tracker-Dashboard/tracker-dashboard}
+      PR_MONITOR_INTERVAL_SECONDS: ${PR_MONITOR_INTERVAL_SECONDS:-300}
+      PR_MONITOR_TIMEOUT_SECONDS: ${PR_MONITOR_TIMEOUT_SECONDS:-2700}
+      PR_MONITOR_MAX_RETRIES: ${PR_MONITOR_MAX_RETRIES:-3}
+      PR_MONITOR_GIT_NAME: ${PR_MONITOR_GIT_NAME:-Aerya}
+      PR_MONITOR_GIT_EMAIL: ${PR_MONITOR_GIT_EMAIL:-Aerya@users.noreply.github.com}
+      PR_MONITOR_CONTEXT_FILE: /workspace/private-context/tracker-dashboard/TRACKER_DASHBOARD_CONTEXT.md
+    volumes:
+      - /home/aerya/docker/claudecodeui/codex:/root/.codex
+      - /home/aerya/docker/claudecodeui/pr-monitor:/var/lib/pr-monitor
+      - /home/aerya/docker/claudecodeui/private-context:/workspace/private-context:ro
+      - /home/aerya/CodingOnline:/workspace/CodingOnline
+    working_dir: /workspace/CodingOnline
+    command: ["/usr/local/bin/pr-monitor.sh"]

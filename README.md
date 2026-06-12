@@ -91,3 +91,30 @@ Copiées automatiquement au démarrage vers `/root/.claude`, `/root/.codex` et `
 ## Notes licence
 
 L'upstream CloudCLI / Claude Code UI est sous licence AGPL-3.0-or-later.
+
+## Revue continue des pull requests
+
+Le service optionnel `pr-review-service` surveille les pull requests internes et
+non brouillonnes de `Tracker-Dashboard/tracker-dashboard`. Il lance une revue lors
+d'un nouveau SHA, puis une nouvelle intervention si un controle obligatoire
+echoue. Les forks sont ignores et la fusion reste soumise aux protections GitHub.
+
+Prerequis :
+
+- Codex connecte avec ChatGPT dans le volume persistant `/root/.codex` ;
+- un fine-grained PAT limite au depot cible avec `Contents: Read and write`,
+  `Pull requests: Read and write`, `Actions: Read` et `Metadata: Read` ;
+- le contexte prive monte dans `/workspace/private-context` ;
+- `PR_MONITOR_ENABLED=true` dans `.env`.
+
+Demarrage et suivi :
+
+```bash
+docker compose pull
+docker compose up -d --force-recreate
+docker compose logs -f pr-review-service
+```
+
+Le service interroge GitHub toutes les cinq minutes par defaut. Il limite chaque
+execution a 45 minutes et chaque etat en erreur a trois tentatives. Son historique
+reste prive dans `/home/aerya/docker/claudecodeui/pr-monitor`.
