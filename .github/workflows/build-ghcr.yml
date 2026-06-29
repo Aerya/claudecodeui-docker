@@ -14,7 +14,7 @@ on:
       - "scripts/**"
       - "overrides/**"
       - "compose.yml"
-      - ".env.example"
+      - ".env.exemple"
       - "README.md"
 
 permissions:
@@ -77,8 +77,30 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
+      - name: Pre-pull BuildKit image
+        shell: bash
+        # Buildx boots its builder from moby/buildkit on Docker Hub. Docker Hub
+        # occasionally times out from GitHub runners, which fails the whole run.
+        # Pre-pulling with retries puts the image in the local cache so the
+        # builder boots without touching the registry. Never fail the job here:
+        # if every attempt times out, let buildx try its own pull afterwards.
+        run: |
+          set -euo pipefail
+          image="moby/buildkit:buildx-stable-1"
+          for attempt in 1 2 3 4 5; do
+            if docker pull "$image"; then
+              echo "Pulled ${image} on attempt ${attempt}"
+              exit 0
+            fi
+            echo "Pull attempt ${attempt} failed; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          echo "::warning::Could not pre-pull ${image} after 5 attempts; buildx will attempt its own pull"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          driver-opts: image=moby/buildkit:buildx-stable-1
 
       - name: Login to GHCR
         uses: docker/login-action@v4

@@ -53,7 +53,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /opt/claudecodeui
 COPY upstream/ ./
-RUN npm install --no-audit --no-fund
+RUN if [ -f package-lock.json ]; then \
+      npm ci --no-audit --no-fund; \
+    else \
+      npm install --no-audit --no-fund; \
+    fi
 RUN npm run build \
   && mkdir -p /tmp/cloudcli-pack \
   && npm pack --pack-destination /tmp/cloudcli-pack \
